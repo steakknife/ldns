@@ -16,7 +16,9 @@
 
 #ifdef HAVE_SSL
 #include <openssl/ssl.h>
+#ifndef OPENSSL_NO_ENGINE
 #include <openssl/engine.h>
+#endif /* OPENSSL_NO_ENGINE */
 #include <openssl/rand.h>
 #endif /* HAVE_SSL */
 
@@ -96,6 +98,7 @@ ldns_key_new_frm_engine(ldns_key **key, ENGINE *e, char *key_id, ldns_algorithm 
 
 	k = ldns_key_new();
         if(!k) return LDNS_STATUS_MEM_ERR;
+#ifndef OPENSSL_NO_ENGINE
 #ifndef S_SPLINT_S
 	k->_key.key = ENGINE_load_private_key(e, key_id, UI_OpenSSL(), NULL);
         if(!k->_key.key) {
@@ -108,6 +111,7 @@ ldns_key_new_frm_engine(ldns_key **key, ENGINE *e, char *key_id, ldns_algorithm 
 		return LDNS_STATUS_ENGINE_KEY_NOT_LOADED;
 	} 
 #endif /* splint */
+#endif /* OPENSSL_NO_ENGINE */
 	*key = k;
 	return LDNS_STATUS_OK;
 }
